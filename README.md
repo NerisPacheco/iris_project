@@ -1,28 +1,16 @@
-\# Clasificacion de Especies Iris - Universidad de la Costa
+# Iris Species Classification - University of Costa
 
+## Team Members
+⦁	Elis García Morales
+⦁	Neris Pacheco Orozco
 
+## Description
+Final Data Mining project for Iris flower species classification using Machine Learning.
 
-\## Integrantes
-
-\- \[Nombres de tu equipo aqui]
-
-
-
-\## Descripcion
-
-Proyecto final de Data Mining para clasificacion de especies de flores Iris.
-
-
-
-\## Instalacion
-
+## Installation
 pip install -r requirements.txt
-
 streamlit run app.py
 
-
-
-\## Universidad de la Costa
-
-Departamento de Ciencias de la Computacion y Electronica
+## University of Costa
+Department of Computer Science and Electronics
 
