@@ -7,104 +7,104 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix
 import plotly.express as px
 
-# Configurar página
-st.set_page_config(page_title="Clasificación Iris", layout="wide")
+# Configure page
+st.set_page_config(page_title="Iris Classification", layout="wide")
 
-# Título
-st.title("Clasificación de Especies Iris")
-st.markdown("**Universidad de la Costa - Data Mining**")
+# Title
+st.title("Iris Species Classification")
+st.markdown("**University of Costa - Data Mining**")
 st.markdown("---")
 
-# Cargar datos
+# Load data
 iris = load_iris()
 df = pd.DataFrame(iris.data, columns=iris.feature_names)
 df['species'] = iris.target
-df['especie'] = df['species'].map({0: 'Setosa', 1: 'Versicolor', 2: 'Virginica'})
+df['species_name'] = df['species'].map({0: 'Setosa', 1: 'Versicolor', 2: 'Virginica'})
 
 # Sidebar
-st.sidebar.title("Navegación")
-pagina = st.sidebar.radio("Ir a:", ["Analisis", "Modelo", "Predecir"])
+st.sidebar.title("Navigation")
+page = st.sidebar.radio("Go to:", ["Data Analysis", "ML Model", "Predict Species"])
 
-if pagina == "Analisis":
-    st.header("Analisis de Datos")
+if page == "Data Analysis":
+    st.header("Data Analysis")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("Datos del Dataset")
-        st.write(f"Muestras: {len(df)}")
+        st.subheader("Dataset")
+        st.write(f"Samples: {len(df)}")
         st.dataframe(df.head())
     
     with col2:
-        st.subheader("Distribucion de Especies")
-        fig = px.pie(df, names='especie', title='Especies en el Dataset')
+        st.subheader("Species Distribution")
+        fig = px.pie(df, names='species_name', title='Species in Dataset')
         st.plotly_chart(fig)
     
-    st.subheader("Histograma por Caracteristica")
-    caracteristica = st.selectbox("Selecciona:", iris.feature_names)
-    fig2 = px.histogram(df, x=caracteristica, color='especie', title=f'Distribucion de {caracteristica}')
+    st.subheader("Feature Histogram")
+    feature = st.selectbox("Select feature:", iris.feature_names)
+    fig2 = px.histogram(df, x=feature, color='species_name', title=f'Distribution of {feature}')
     st.plotly_chart(fig2)
 
-elif pagina == "Modelo":
-    st.header("Modelo de Machine Learning")
+elif page == "ML Model":
+    st.header("Machine Learning Model")
     
-    # Entrenar modelo
+    # Train model
     X = df[iris.feature_names]
     y = df['species']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
-    modelo = RandomForestClassifier(n_estimators=100, random_state=42)
-    modelo.fit(X_train, y_train)
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model.fit(X_train, y_train)
     
-    # Predecir y calcular metricas
-    y_pred = modelo.predict(X_test)
+    # Predict and calculate metrics
+    y_pred = model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
     
-    st.metric("Precision del Modelo", f"{accuracy:.1%}")
-    st.write(f"Muestras de entrenamiento: {len(X_train)}")
-    st.write(f"Muestras de prueba: {len(X_test)}")
+    st.metric("Model Accuracy", f"{accuracy:.1%}")
+    st.write(f"Training samples: {len(X_train)}")
+    st.write(f"Test samples: {len(X_test)}")
     
-    # Matriz de confusion
-    st.subheader("Matriz de Confusion")
+    # Confusion matrix
+    st.subheader("Confusion Matrix")
     cm = confusion_matrix(y_test, y_pred)
-    fig_cm = px.imshow(cm, text_auto=True, title="Matriz de Confusion")
+    fig_cm = px.imshow(cm, text_auto=True, title="Confusion Matrix")
     st.plotly_chart(fig_cm)
 
 else:
-    st.header("Predecir Especie")
+    st.header("Predict Species")
     
-    st.write("Ingresa las medidas de la flor:")
+    st.write("Enter flower measurements:")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        sepalo_largo = st.slider("Largo del Sepalo (cm)", 4.0, 8.0, 5.5)
-        sepalo_ancho = st.slider("Ancho del Sepalo (cm)", 2.0, 4.5, 3.0)
+        sepal_length = st.slider("Sepal Length (cm)", 4.0, 8.0, 5.5)
+        sepal_width = st.slider("Sepal Width (cm)", 2.0, 4.5, 3.0)
     
     with col2:
-        petalo_largo = st.slider("Largo del Petalo (cm)", 1.0, 7.0, 3.5)
-        petalo_ancho = st.slider("Ancho del Petalo (cm)", 0.1, 2.5, 1.0)
+        petal_length = st.slider("Petal Length (cm)", 1.0, 7.0, 3.5)
+        petal_width = st.slider("Petal Width (cm)", 0.1, 2.5, 1.0)
     
-    # Entrenar modelo
+    # Train model
     X = df[iris.feature_names]
     y = df['species']
-    modelo = RandomForestClassifier(n_estimators=100, random_state=42)
-    modelo.fit(X, y)
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model.fit(X, y)
     
-    # Predecir
-    medidas = [[sepalo_largo, sepalo_ancho, petalo_largo, petalo_ancho]]
-    prediccion = modelo.predict(medidas)[0]
-    probabilidades = modelo.predict_proba(medidas)[0]
+    # Predict
+    measurements = [[sepal_length, sepal_width, petal_length, petal_width]]
+    prediction = model.predict(measurements)[0]
+    probabilities = model.predict_proba(measurements)[0]
     
-    especies = ['Setosa', 'Versicolor', 'Virginica']
-    especie_predicha = especies[prediccion]
+    species_names = ['Setosa', 'Versicolor', 'Virginica']
+    predicted_species = species_names[prediction]
     
-    st.success(f"**Especie predicha: {especie_predicha}**")
+    st.success(f"**Predicted species: {predicted_species}**")
     
-    # Mostrar probabilidades
-    st.subheader("Probabilidades:")
-    for i, prob in enumerate(probabilidades):
-        st.write(f"{especies[i]}: {prob:.1%}")
+    # Show probabilities
+    st.subheader("Probabilities:")
+    for i, prob in enumerate(probabilities):
+        st.write(f"{species_names[i]}: {prob:.1%}")
 
 st.markdown("---")
-st.markdown("Proyecto Final Data Mining - Universidad de la Costa")
+st.markdown("Final Project - Data Mining - University of Costa")
